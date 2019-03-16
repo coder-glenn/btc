@@ -27,7 +27,7 @@ public class MailService {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(mailProperties.getFrom());
         mailMessage.setTo(mailProperties.getTo());
-
+        mailMessage.setCc(mailProperties.getCc());
         mailMessage.setSubject(subject);
         mailMessage.setText(text);
 
@@ -43,7 +43,7 @@ public class MailService {
 
         messageHelper.setFrom(mailProperties.getFrom());
         messageHelper.setTo(mailProperties.getTo());
-
+        messageHelper.setCc(mailProperties.getCc());
         messageHelper.setSubject(subject);
         messageHelper.setText(text, true);//重点，默认为false，显示原始html代码，无效果
 

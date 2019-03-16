@@ -43,4 +43,14 @@ public class Coin implements Serializable {
     public void setSell(String sell) {
         this.sell = sell;
     }
+
+    @Override
+    public String toString() {
+        return "Coin{" +
+                "coinId=" + coinId +
+                ", coinName='" + coinName + '\'' +
+                ", buy='" + buy + '\'' +
+                ", sell='" + sell + '\'' +
+                '}';
+    }
 }

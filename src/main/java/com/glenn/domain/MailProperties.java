@@ -11,6 +11,8 @@ public class MailProperties {
 
     private String to;
 
+    private String cc;
+
     public String getFrom() {
         return from;
     }
@@ -25,5 +27,13 @@ public class MailProperties {
 
     public void setTo(String to) {
         this.to = to;
+    }
+
+    public String getCc() {
+        return cc;
+    }
+
+    public void setCc(String cc) {
+        this.cc = cc;
     }
 }
