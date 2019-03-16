@@ -47,24 +47,32 @@ public class PriceCalculationTask {
                 String currentSellPrice = coin.getSell();
                 isSellPriceUp(sellPriceBeforeHalfAnHour, sellPriceBeforeAnHour, currentSellPrice, coin);
                 isBuyPriceDown(buyPriceBeforeHalfAnHour, buyPriceBeforeAnHour, currentBuyPrice, coin);
+//                if (coin.getCoinId() == 1) {
+//                    System.out.println(coin.getCoinName() + " current buy: " + currentBuyPrice + " ,current sell " + currentSellPrice + " , buyPriceBeforeHalfAnHour " + buyPriceBeforeHalfAnHour + " ,sellPriceBeforeHalfAnHour " + sellPriceBeforeHalfAnHour + " ,buyPriceBeforeAnHour " + buyPriceBeforeAnHour + ", sellPriceBeforeAnHour " + sellPriceBeforeAnHour);
+//                }
             }
         }
 
-        System.out.println(new Date() + "current price " + Arrays.asList(coins));
     }
 
     //每30分钟执行一次
-    @Scheduled(cron = "0 */30 *  * * * ")
+    @Scheduled(cron = "0 */29 *  * * * ")
     public void beforePriceHalfAnHour() throws Exception {
+        if (this.getPriceBeforeHalfAnHour() != null) {
+            this.getPriceBeforeHalfAnHour().clear();
+        }
         this.setPriceBeforeHalfAnHour(this.getPriceToMap());
-        System.out.println(new Date() + "price half an hour ago " + this.getPriceBeforeHalfAnHour());
+        //System.out.println("half an hour ago, buy " + this.getPriceBeforeHalfAnHour().get("BTC").getBuy() + ", sell " + this.getPriceBeforeHalfAnHour().get("BTC").getSell());
     }
 
     //每60分钟执行一次
-    @Scheduled(cron = "0 */60 *  * * * ")
+    @Scheduled(cron = "0 */62 *  * * * ")
     public void beforePriceAnHour() throws Exception {
+        if (this.getPriceBeforeAnHour() != null) {
+            this.getPriceBeforeAnHour().clear();
+        }
         this.setPriceBeforeAnHour(this.getPriceToMap());
-        System.out.println(new Date() + "price an hour ago " + this.getPriceBeforeAnHour());
+        //System.out.println("an hour ago, buy " + this.getPriceBeforeAnHour().get("BTC").getBuy() + ", sell " + this.getPriceBeforeAnHour().get("BTC").getSell());
     }
 
     private Coin[] getPrice() {
@@ -92,8 +100,6 @@ public class PriceCalculationTask {
     }
 
     private HashMap<String, Coin> getPriceToMap() {
-        this.getPriceBeforeAnHour().clear();
-        this.getPriceBeforeHalfAnHour().clear();
         Coin[] coins = this.getPrice();
         HashMap<String, Coin> coinHashMap = new HashMap<>();
         for (Coin coin : coins) {
@@ -104,11 +110,11 @@ public class PriceCalculationTask {
 
     private void isSellPriceUp(String sellPriceBeforeHalfAnHour, String sellPriceBeforeAnHour, String currentSellPrice, Coin coin) {
         if ((Double.valueOf(sellPriceBeforeAnHour) + Double.valueOf(sellPriceBeforeAnHour) * 0.02) < Double.valueOf(currentSellPrice)) {
-            mailService.sendSimpleMail("【重要邮件】"+  coin.getCoinName() + " sell price is going up than half an hour ago" +"【及时查看】",coin.getCoinName() + " current sell price: " + currentSellPrice + " RMB, half an hour ago price: " + sellPriceBeforeHalfAnHour + " RMB");
+            mailService.sendSimpleMail("【Important】"+  coin.getCoinName() + " sale price is going up than half an hour ago " +"【Important】",coin.getCoinName() + " current sale price: " + currentSellPrice + " RMB, half an hour ago price: " + sellPriceBeforeHalfAnHour + " RMB");
         }
 
         if ((Double.valueOf(sellPriceBeforeHalfAnHour) + Double.valueOf(sellPriceBeforeHalfAnHour) * 0.02) < Double.valueOf(currentSellPrice)) {
-            mailService.sendSimpleMail("【重要邮件】"+  coin.getCoinName() + " sell price is going up than an hour ago" +"【及时查看】",coin.getCoinName() + " current sell price: " + currentSellPrice + " RMB, an hour ago price: " + sellPriceBeforeAnHour + " RMB");
+            mailService.sendSimpleMail("【Important】"+  coin.getCoinName() + " sale price is going up than an hour ago " +"【Important】",coin.getCoinName() + " current sale price: " + currentSellPrice + " RMB, an hour ago price: " + sellPriceBeforeAnHour + " RMB");
         }
 
     }
@@ -116,11 +122,11 @@ public class PriceCalculationTask {
     private void isBuyPriceDown(String buyPriceBeforeHalfAnHour, String buyPriceBeforeAnHour, String currentBuyPrice, Coin coin) {
 
         if ((Double.valueOf(buyPriceBeforeHalfAnHour) - Double.valueOf(buyPriceBeforeHalfAnHour) * 0.02) > Double.valueOf(currentBuyPrice)) {
-            mailService.sendSimpleMail("【重要邮件】"+  coin.getCoinName() + " buy price is going down than half an hour ago" +"【及时查看】",coin.getCoinName() + " current buy price: " + currentBuyPrice + " RMB, half an hour ago price: " + buyPriceBeforeHalfAnHour + " RMB");
+            mailService.sendSimpleMail("【Important】"+  coin.getCoinName() + " purchase price is going down than half an hour ago " +"【Important】",coin.getCoinName() + " current purchase price: " + currentBuyPrice + " RMB, half an hour ago price: " + buyPriceBeforeHalfAnHour + " RMB");
         }
 
         if ((Double.valueOf(buyPriceBeforeAnHour) - Double.valueOf(buyPriceBeforeAnHour) * 0.02) > Double.valueOf(currentBuyPrice)) {
-            mailService.sendSimpleMail("【重要邮件】"+  coin.getCoinName() + " buy price is going down than an hour ago" +"【及时查看】",coin.getCoinName() + " current buy price: " + currentBuyPrice + " RMB, an hour ago price: " + buyPriceBeforeAnHour + " RMB");
+            mailService.sendSimpleMail("【Important】"+  coin.getCoinName() + " purchase price is going down than an hour ago " +"【Important】",coin.getCoinName() + " current purchase price: " + currentBuyPrice + " RMB, an hour ago price: " + buyPriceBeforeAnHour + " RMB");
         }
     }
 
