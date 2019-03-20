@@ -149,6 +149,7 @@ public class PriceCalculationTask {
 
         if (getBuyXRP() && Double.valueOf(currentSellPrice) >= expectedXRPSellPrice) {
             mailService.sendSimpleMail("【重要邮件】XRP当前价格可出售【及时查看】", "XRP当前价格为 " + currentSellPrice);
+            setBuyXRP(false);
         }
     }
 
