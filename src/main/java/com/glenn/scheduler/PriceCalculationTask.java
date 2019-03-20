@@ -1,5 +1,6 @@
 package com.glenn.scheduler;
 
+import com.glenn.constant.Constants;
 import com.glenn.domain.Coin;
 import com.glenn.service.HttpClientService;
 import com.glenn.service.MailService;
@@ -27,8 +28,10 @@ public class PriceCalculationTask {
 
     private HashMap<String, Coin> priceBeforeAnHour = new HashMap<>();
 
+    private  Boolean isBuyXRP = false;
+
     //每3分钟执行一次
-    @Scheduled(cron = "0 */3 *  * * * ")
+    @Scheduled(cron = "0 */5 *  * * * ")
     public void realTimePrice() throws Exception {
         Coin[] coins = this.getPrice();
         for (Coin coin : coins) {
@@ -47,6 +50,10 @@ public class PriceCalculationTask {
                 String currentSellPrice = coin.getSell();
                 isSellPriceUp(sellPriceBeforeHalfAnHour, sellPriceBeforeAnHour, currentSellPrice, coin);
                 isBuyPriceDown(buyPriceBeforeHalfAnHour, buyPriceBeforeAnHour, currentBuyPrice, coin);
+                if (coin.getCoinId() == Constants.XRP) {
+                    specifiedPrice(currentBuyPrice, currentSellPrice);
+                }
+
 //                if (coin.getCoinId() == 1) {
 //                    System.out.println(coin.getCoinName() + " current buy: " + currentBuyPrice + " ,current sell " + currentSellPrice + " , buyPriceBeforeHalfAnHour " + buyPriceBeforeHalfAnHour + " ,sellPriceBeforeHalfAnHour " + sellPriceBeforeHalfAnHour + " ,buyPriceBeforeAnHour " + buyPriceBeforeAnHour + ", sellPriceBeforeAnHour " + sellPriceBeforeAnHour);
 //                }
@@ -130,6 +137,21 @@ public class PriceCalculationTask {
         }
     }
 
+
+    private void specifiedPrice(String currentBuyPrice, String currentSellPrice) {
+        Double expectedXRPBuyPrice = Double.valueOf(2.11);
+        Double expectedXRPSellPrice = Double.valueOf(2.13);
+
+        if (Double.valueOf(currentBuyPrice) <= expectedXRPBuyPrice) {
+            mailService.sendSimpleMail("【重要邮件】XRP当前价格可买入【及时查看】", "XRP当前价格为 " + currentBuyPrice);
+            setBuyXRP(true);
+        }
+
+        if (getBuyXRP() && Double.valueOf(currentSellPrice) >= expectedXRPSellPrice) {
+            mailService.sendSimpleMail("【重要邮件】XRP当前价格可出售【及时查看】", "XRP当前价格为 " + currentSellPrice);
+        }
+    }
+
     public HashMap<String, Coin> getPriceBeforeHalfAnHour() {
         return priceBeforeHalfAnHour;
     }
@@ -144,5 +166,13 @@ public class PriceCalculationTask {
 
     public void setPriceBeforeAnHour(HashMap<String, Coin> priceBeforeAnHour) {
         this.priceBeforeAnHour = priceBeforeAnHour;
+    }
+
+    public Boolean getBuyXRP() {
+        return isBuyXRP;
+    }
+
+    public void setBuyXRP(Boolean buyXRP) {
+        isBuyXRP = buyXRP;
     }
 }
