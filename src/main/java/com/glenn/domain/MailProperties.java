@@ -11,7 +11,7 @@ public class MailProperties {
 
     private String to;
 
-    private String cc;
+    private String[] cc;
 
     public String getFrom() {
         return from;
@@ -29,11 +29,11 @@ public class MailProperties {
         this.to = to;
     }
 
-    public String getCc() {
+    public String[] getCc() {
         return cc;
     }
 
-    public void setCc(String cc) {
+    public void setCc(String[] cc) {
         this.cc = cc;
     }
 }

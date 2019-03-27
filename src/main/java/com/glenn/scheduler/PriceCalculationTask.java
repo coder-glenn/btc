@@ -30,8 +30,12 @@ public class PriceCalculationTask {
 
     private  Boolean isBuyXRP = false;
 
+    private Double sentBuyPrice = 0.00;
+
+    private Double sentSellPrice = 0.00;
+
     //每3分钟执行一次
-    @Scheduled(cron = "0 */5 *  * * * ")
+    @Scheduled(cron = "0 */10 *  * * * ")
     public void realTimePrice() throws Exception {
         Coin[] coins = this.getPrice();
         for (Coin coin : coins) {
@@ -56,6 +60,7 @@ public class PriceCalculationTask {
 
 //                if (coin.getCoinId() == 1) {
 //                    System.out.println(coin.getCoinName() + " current buy: " + currentBuyPrice + " ,current sell " + currentSellPrice + " , buyPriceBeforeHalfAnHour " + buyPriceBeforeHalfAnHour + " ,sellPriceBeforeHalfAnHour " + sellPriceBeforeHalfAnHour + " ,buyPriceBeforeAnHour " + buyPriceBeforeAnHour + ", sellPriceBeforeAnHour " + sellPriceBeforeAnHour);
+//                    mailService.sendSimpleMail("测试邮件", coin.getCoinName() + " current buy: " + currentBuyPrice + " ,current sell " + currentSellPrice + " , buyPriceBeforeHalfAnHour " + buyPriceBeforeHalfAnHour + " ,sellPriceBeforeHalfAnHour " + sellPriceBeforeHalfAnHour + " ,buyPriceBeforeAnHour " + buyPriceBeforeAnHour + ", sellPriceBeforeAnHour " + sellPriceBeforeAnHour);
 //                }
             }
         }
@@ -140,16 +145,16 @@ public class PriceCalculationTask {
 
     private void specifiedPrice(String currentBuyPrice, String currentSellPrice) {
         Double expectedXRPBuyPrice = Double.valueOf(2.11);
-        Double expectedXRPSellPrice = Double.valueOf(2.13);
+        Double expectedXRPSellPrice = Double.valueOf(2.12);
 
-        if (Double.valueOf(currentBuyPrice) <= expectedXRPBuyPrice) {
-            mailService.sendSimpleMail("【重要邮件】XRP当前价格可买入【及时查看】", "XRP当前价格为 " + currentBuyPrice);
-            setBuyXRP(true);
+        if (Double.valueOf(currentBuyPrice) != getSentBuyPrice() && Double.valueOf(currentBuyPrice) <= expectedXRPBuyPrice) {
+            mailService.sendSimpleMail("【重要邮件】波波币当前["+ currentBuyPrice+"]价格可买入【及时查看】", "波波币当前价格为 " + currentBuyPrice);
+            setSentBuyPrice(Double.valueOf(currentBuyPrice));
         }
 
-        if (getBuyXRP() && Double.valueOf(currentSellPrice) >= expectedXRPSellPrice) {
-            mailService.sendSimpleMail("【重要邮件】XRP当前价格可出售【及时查看】", "XRP当前价格为 " + currentSellPrice);
-            setBuyXRP(false);
+        if (Double.valueOf(currentSellPrice) != getSentSellPrice() && Double.valueOf(currentSellPrice) >= expectedXRPSellPrice) {
+            mailService.sendSimpleMail("【重要邮件】波波币当前[" + currentSellPrice + "]价格可出售【及时查看】", "波波币当前价格为 " + currentSellPrice);
+            setSentSellPrice(Double.valueOf(currentSellPrice));;
         }
     }
 
@@ -175,5 +180,21 @@ public class PriceCalculationTask {
 
     public void setBuyXRP(Boolean buyXRP) {
         isBuyXRP = buyXRP;
+    }
+
+    public Double getSentBuyPrice() {
+        return sentBuyPrice;
+    }
+
+    public void setSentBuyPrice(Double sentBuyPrice) {
+        this.sentBuyPrice = sentBuyPrice;
+    }
+
+    public Double getSentSellPrice() {
+        return sentSellPrice;
+    }
+
+    public void setSentSellPrice(Double sentSellPrice) {
+        this.sentSellPrice = sentSellPrice;
     }
 }
